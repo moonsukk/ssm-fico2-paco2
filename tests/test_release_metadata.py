@@ -11,13 +11,18 @@ class ReleaseMetadataTests(unittest.TestCase):
         cls.citation=(ROOT/'CITATION.cff').read_text()
         cls.notebook=json.loads(NOTEBOOK.read_text())
 
-    def test_development_version_agrees_across_artifacts(self):
+    def test_version_and_release_status_agree_across_artifacts(self):
         version=self.manifest['version']
-        self.assertTrue(version.endswith('-dev'))
-        self.assertEqual(self.manifest['release_status'],'development')
         self.assertEqual(re.search(r'^version: (.+)$',self.citation,re.M).group(1),version)
         self.assertEqual(self.notebook['metadata']['tutorial_revision'],version)
-        self.assertIsNone(re.search(r'^date-released:',self.citation,re.M),'Development metadata must not claim a release date')
+        released=re.search(r'^date-released: (\d{4}-\d{2}-\d{2})$',self.citation,re.M)
+        if version.endswith('-dev'):
+            self.assertEqual(self.manifest['release_status'],'development')
+            self.assertIsNone(re.search(r'^date-released:',self.citation,re.M),'Development metadata must not claim a release date')
+        else:
+            self.assertRegex(version,r'^\d+\.\d+\.\d+$')
+            self.assertEqual(self.manifest['release_status'],'released')
+            self.assertIsNotNone(released,'A release must state its citation release date')
         self.assertNotIn('publication_status',self.manifest)
         self.assertNotIn('uncommitted_local_candidate',json.dumps(self.manifest))
 

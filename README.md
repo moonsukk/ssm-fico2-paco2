@@ -6,13 +6,13 @@ A reproducible Jupyter companion for a technical note in preparation by M. Kim. 
 
 ## Start here
 
-The current **0.1.1-dev** teaching revision opens with a short converter example in both directions, followed by one editable input cell. Choose `forward`, `reverse` or `both`. Forward conversion requires baseline and inspired percentage; reverse conversion requires baseline and achieved/target pressure. Leave an unused directional input as `None`. In `both` mode, each direction is checked independently, so an invalid input cannot hide the other valid estimate. Supply known optional parameters or leave them as `None` to keep the displayed model assumptions. The example is separate from the fixed literature reproduction below it.
+Release **v0.1.1** opens with a short converter example in both directions, followed by one editable input cell. Choose `forward`, `reverse` or `both`. Forward conversion requires baseline and inspired percentage; reverse conversion requires baseline and achieved/target pressure. Leave an unused directional input as `None`. In `both` mode, each direction is checked independently, so an invalid input cannot hide the other valid estimate. Supply known optional parameters or leave them as `None` to keep the displayed model assumptions. The example is separate from the fixed literature reproduction below it.
 
 Section 5a follows [Jain et al. (2011)](https://doi.org/10.1038/jcbfm.2011.34) from its existing raw source record through both conversions. It separates prediction inputs from measured/reported comparators, explains signed errors, and shows why the reported and study-summary values coincide for this single cohort. The paper’s PETCO₂ means remain end-tidal proxies, not arterial measurements.
 
 The linked **Reading guide** provides a shorter route through inputs, equations, the paper example, sensitivity and results. Run all cells in order before following that route. Expand the optional evidence tables for every source contribution, comparison and dose-specific metric; no rows are dropped and closed tables do not skip calculations. The three original plots and concise interpretations remain visible.
 
-The `main` branch carries the **0.1.1-dev development version**. It is separate from the fixed [v0.1.0 release](https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0); a commit or push to `main` does not create a new tagged release.
+**v0.1.1** is the current release. The earlier [v0.1.0 release](https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0) remains available unchanged; a later commit or push to `main` does not create a new tagged release.
 
 ## Scope and results
 
@@ -71,7 +71,7 @@ Supply known baseline and physiological parameters where appropriate. Unchanged 
 | `data/supplement_sensitivity_inputs.json` | Explicit optional sensitivity assumptions and source slope |
 | `data/expected_results.json` | Frozen regression expectations; never used to supply predictions |
 | `data/provenance.json` | Frozen-input origin and version identifiers |
-| `release_manifest.json` | Package version, release status, fixed baseline and file hashes |
+| `release_manifest.json` | Package version, release status, earlier release and file hashes |
 | `CITATION.cff` | Software citation metadata; the technical note is not yet published |
 
 The public data are a fixed, curated export of selected literature inputs from the author's reviewed analysis. They are not an exhaustive literature search, the entire editable workbook, or newly collected participant data. The engine reconstructs summaries and predictions from the input records, then compares them with the separate expected results. Changing the source selection is a new analysis; do not replace expected values merely to make a failed check pass.
@@ -91,10 +91,10 @@ The separate dynamic-model research and tutorial are outside this repository. No
 
 ## Version and license
 
-Current development version: **0.1.1-dev** on `main`. Fixed published baseline: [**v0.1.0**](https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0), 24 September 2026, commit `6e306ecb6c844f4626a67e80d5fb44270e93c951`. Cite the release tag or exact development commit actually used. Keep the notebook, inputs and code from the same version together.
+Current release: **v0.1.1**, 24 September 2026. Earlier release: [**v0.1.0**](https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0), 24 September 2026, commit `6e306ecb6c844f4626a67e80d5fb44270e93c951`. Cite the release tag actually used, or the exact commit if you use a later state of `main`. Keep the notebook, inputs and code from the same version together.
 
-`release_status: development` describes the package, not whether your checkout has been committed or pushed. Check the latter in GitHub Desktop, or use `git status` and `git rev-parse HEAD`; compare the commit with the GitHub branch. Local edits are not uploaded automatically. The manifest excludes its own hash to avoid self-reference. Its hashes describe the distributed file bytes: notebook execution can rewrite execution metadata and HTML identifiers without changing the numerical results.
+`release_status` describes the package, not whether your checkout has been committed or pushed. Check the latter in GitHub Desktop, or use `git status` and `git rev-parse HEAD`; compare the commit with the GitHub branch. Local edits are not uploaded automatically. The manifest excludes its own hash to avoid self-reference. Its hashes describe the distributed file bytes: notebook execution can rewrite execution metadata and HTML identifiers without changing the numerical results.
 
-For a future tagged release, set its version consistently in the notebook, `CITATION.cff`, README and manifest; set the release status and citation release date; verify the package hashes and tests; then tag that exact reviewed commit. Never move `v0.1.0` to a newer commit.
+For a future tagged release, set its version consistently in the notebook, `CITATION.cff`, README and manifest; set the release status and citation release date; verify the package hashes and tests; then tag that exact reviewed commit. Never move an existing release tag to a newer commit.
 
 Code and original tutorial material use the MIT license in `LICENSE`. Literature tables contain extracted factual values with attribution; source publications retain their respective rights. No source-PDF license is implied.

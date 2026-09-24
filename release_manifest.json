@@ -1,15 +1,15 @@
 {
-  "version": "0.1.1-dev",
+  "version": "0.1.1",
   "model_version": "ssm-2026-09-17-medical-air",
   "source_analysis_sha256": "14162180cf22b8c4fcce632c3c28d58e71f1042ca8cf816787754de98b352a84",
   "files": {
     ".github/workflows/test.yml": "c64e446379ac1b5dcb3823e917cf8695938a9a5ebd4d3fd7d419d1afa970b6b4",
     ".gitignore": "1b11a0cfc97fd1c93502ca9a546165c64629db9bc0f9207aa4cb370047ce6e33",
-    "CITATION.cff": "8fad6b1034fa07d740ca67dd33cd794b84e26c62cd5b160e185aa379ef52c319",
+    "CITATION.cff": "09d8fe197c87dc3e3ae4b9b53bd276366b760bddbbd7aca8f1cbcccb2f709b55",
     "LICENSE": "562d4134eb4f0d2d1778289e6a212bf57d83e59b25ef912ea13c6dc1b8fbd36a",
-    "README.md": "5ed17362c06bbbf406f1c719776b1086605731b683a4bdc3c7cf904a8f45e4eb",
+    "README.md": "17ad5657b35d61e6db533de7fe08fb4ef6e1aa9fe8891ee02ce72566ce1c241b",
     "SSM_FiCO2_PaCO2_tutorial.html": "c1682f2f3b0c182b0a18cb75c7e77e640b4ed84412a21d1fbbce93dce221824f",
-    "SSM_FiCO2_PaCO2_tutorial.ipynb": "0377839b3cac96a7887997915e0fb175bcc5f4909f7fed0b48cb7ae63d1f1939",
+    "SSM_FiCO2_PaCO2_tutorial.ipynb": "db734905bd4eb337106b0204beb4d1a74432c4ccc3893cd9e77a3d9eba1b4652",
     "code/model_figures.py": "6f2d0ea477ebaba48a9d04d9416a51dbb25dec03d0b218f705f4e9e48b81f894",
     "code/plot_style.py": "06e1bf49c276cabae444331b78f04c1cb5fbc76045be47a36fa4751233d8d7db",
     "code/plot_validation.py": "b96b83c417da2f9ea4624071dca2ffa22490d643413b74c25a6088ecbfe9a39d",
@@ -29,10 +29,10 @@
     "tests/test_companion.py": "e214c5ccbae7439737a596b258c263fd0185798e56bcd718c308890e2373df0b",
     "tests/test_notebook_inputs.py": "92cd91d2a9cf956495fac2e72764dfc40463f1580fc5881df10ddeb23d6c13d1",
     "tests/test_notebook_setup.py": "66316fa561c1263e1c951cb8ab871d6852dad0d4256422cb7c352d096a81a7c3",
-    "tests/test_release_metadata.py": "0d689644c80626ad36fd5d0231d100ef586bf1f2901e8d6ab696f0507ebf4894"
+    "tests/test_release_metadata.py": "4c111793aad068dfa60c4d7b46ad1454c2a80374844b6fd12f25e03aebbc6b95"
   },
   "based_on": "v0.1.0",
-  "release_status": "development",
+  "release_status": "released",
   "released_baseline": {
     "tag": "v0.1.0",
     "commit": "6e306ecb6c844f4626a67e80d5fb44270e93c951",
