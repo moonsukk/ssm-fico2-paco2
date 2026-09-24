@@ -6,7 +6,7 @@ A reproducible Jupyter companion for a technical note in preparation by M. Kim. 
 
 ## Start here
 
-The current **0.1.1-dev** teaching revision opens with a short converter example in both directions, followed by one editable input cell. Enter your baseline, inspired percentage and achieved/target pressure; supply known optional parameters or leave them as `None` to keep the displayed model assumptions. The example is separate from the fixed literature reproduction below it.
+The current **0.1.1-dev** teaching revision opens with a short converter example in both directions, followed by one editable input cell. Choose `forward`, `reverse` or `both`. Forward conversion requires baseline and inspired percentage; reverse conversion requires baseline and achieved/target pressure. Leave an unused directional input as `None`. In `both` mode, each direction is checked independently, so an invalid input cannot hide the other valid estimate. Supply known optional parameters or leave them as `None` to keep the displayed model assumptions. The example is separate from the fixed literature reproduction below it.
 
 Section 5a follows [Jain et al. (2011)](https://doi.org/10.1038/jcbfm.2011.34) from its existing raw source record through both conversions. It separates prediction inputs from measured/reported comparators, explains signed errors, and shows why the reported and study-summary values coincide for this single cohort. The paper’s PETCO₂ means remain end-tidal proxies, not arterial measurements.
 
