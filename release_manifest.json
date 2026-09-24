@@ -7,9 +7,9 @@
     ".gitignore": "1b11a0cfc97fd1c93502ca9a546165c64629db9bc0f9207aa4cb370047ce6e33",
     "CITATION.cff": "8fad6b1034fa07d740ca67dd33cd794b84e26c62cd5b160e185aa379ef52c319",
     "LICENSE": "562d4134eb4f0d2d1778289e6a212bf57d83e59b25ef912ea13c6dc1b8fbd36a",
-    "README.md": "edf23c31379d5f93fc02cc88993dc68ae8a0b571487238c1c6ebb1dcbb1cd9ca",
-    "SSM_FiCO2_PaCO2_tutorial.html": "b1c8ed911a76d239a68c1343dacd31ea7220b9302dafb2fbccecfb8cd0b884a3",
-    "SSM_FiCO2_PaCO2_tutorial.ipynb": "b695735162b4fa6a4f8def8efb03230a146133cb6d54febd11026950310f207c",
+    "README.md": "ba23d8dc016a2217140c880d88f2a3e96255708a7cacb633d449b98e73fac18b",
+    "SSM_FiCO2_PaCO2_tutorial.html": "6b56b5d185fd868e7f79754256ba96af11331eb2de08d8c6377a17d068fa5dfb",
+    "SSM_FiCO2_PaCO2_tutorial.ipynb": "56e94a133ea760ba9ab78ac6ec52280fe05ff408dbddfcd09dc70912d64724f8",
     "code/model_figures.py": "6f2d0ea477ebaba48a9d04d9416a51dbb25dec03d0b218f705f4e9e48b81f894",
     "code/plot_style.py": "06e1bf49c276cabae444331b78f04c1cb5fbc76045be47a36fa4751233d8d7db",
     "code/plot_validation.py": "b96b83c417da2f9ea4624071dca2ffa22490d643413b74c25a6088ecbfe9a39d",
@@ -27,8 +27,16 @@
     "requirements.txt": "26a92a5202f88d6d5017e455bce17c871bb94d4025cab8fcfb4fd8008a0fe4c2",
     "run_tutorial.py": "84950a786451d228b7a705904246b7e1d783468c9baa80b28ba9999cf94a8978",
     "tests/test_companion.py": "e214c5ccbae7439737a596b258c263fd0185798e56bcd718c308890e2373df0b",
-    "tests/test_notebook_inputs.py": "92cd91d2a9cf956495fac2e72764dfc40463f1580fc5881df10ddeb23d6c13d1"
+    "tests/test_notebook_inputs.py": "92cd91d2a9cf956495fac2e72764dfc40463f1580fc5881df10ddeb23d6c13d1",
+    "tests/test_notebook_setup.py": "66316fa561c1263e1c951cb8ab871d6852dad0d4256422cb7c352d096a81a7c3",
+    "tests/test_release_metadata.py": "3752811228b36b032a2b8cf91a77872f56076fdeecf3c013d96db5bdc0d0b86f"
   },
-  "publication_status": "uncommitted_local_candidate",
-  "based_on": "v0.1.0"
+  "based_on": "v0.1.0",
+  "release_status": "development",
+  "released_baseline": {
+    "tag": "v0.1.0",
+    "commit": "6e306ecb6c844f4626a67e80d5fb44270e93c951",
+    "date": "2026-09-24",
+    "url": "https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0"
+  }
 }

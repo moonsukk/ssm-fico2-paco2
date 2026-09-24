@@ -10,7 +10,7 @@ The current **0.1.1-dev** teaching revision opens with a short converter example
 
 Section 5a follows [Jain et al. (2011)](https://doi.org/10.1038/jcbfm.2011.34) from its existing raw source record through both conversions. It separates prediction inputs from measured/reported comparators, explains signed errors, and shows why the reported and study-summary values coincide for this single cohort. The paper’s PETCO₂ means remain end-tidal proxies, not arterial measurements.
 
-This revision is an unreleased working copy. The published **v0.1.0** remains unchanged.
+The `main` branch carries the **0.1.1-dev development version**. It is separate from the fixed [v0.1.0 release](https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0); a commit or push to `main` does not create a new tagged release.
 
 ## Scope and results
 
@@ -33,7 +33,7 @@ python -m pip install -r requirements.txt
 python run_tutorial.py
 ```
 
-On Windows, activate with `.venv\Scripts\activate`. The runner starts a new kernel using that environment, executes all cells, and writes the executed notebook and HTML preview. It requires no Excel, MATLAB, Zotero, credentials or source-PDF downloads. For interactive editing, open the notebook in a Jupyter-capable editor using the same environment and select **Restart Kernel and Run All**.
+On Windows, activate with `.venv\Scripts\activate`. The runner starts a new kernel using that environment, executes all cells, and writes the executed notebook and HTML preview. It requires no Excel, MATLAB, Zotero, credentials or source-PDF downloads. For interactive editing, open the notebook in a Jupyter-capable editor using the same environment and select **Restart Kernel and Run All**. Use the repository root as the kernel working directory. In the author workspace, the project root, `tutorial/` and `tutorial/companion/` are also supported; all select the complete companion package. Setup checks its required code/data files before importing. Keep these folders together, and restart the kernel after switching checkouts.
 
 Run the independent numerical and package checks with:
 
@@ -69,7 +69,7 @@ Supply known baseline and physiological parameters where appropriate. Unchanged 
 | `data/supplement_sensitivity_inputs.json` | Explicit optional sensitivity assumptions and source slope |
 | `data/expected_results.json` | Frozen regression expectations; never used to supply predictions |
 | `data/provenance.json` | Frozen-input origin and version identifiers |
-| `release_manifest.json` | File hashes for this companion release |
+| `release_manifest.json` | Package version, release status, fixed baseline and file hashes |
 | `CITATION.cff` | Software citation metadata; the technical note is not yet published |
 
 The public data are a fixed, curated export of selected literature inputs from the author's reviewed analysis. They are not an exhaustive literature search, the entire editable workbook, or newly collected participant data. The engine reconstructs summaries and predictions from the input records, then compares them with the separate expected results. Changing the source selection is a new analysis; do not replace expected values merely to make a failed check pass.
@@ -89,6 +89,10 @@ The separate dynamic-model research and tutorial are outside this repository. No
 
 ## Version and license
 
-Current development version: **0.1.1-dev** (unreleased). Published baseline: **v0.1.0**, 24 September 2026. Cite the released version or exact commit actually used. Keep the notebook, inputs and code from the same version together.
+Current development version: **0.1.1-dev** on `main`. Fixed published baseline: [**v0.1.0**](https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0), 24 September 2026, commit `6e306ecb6c844f4626a67e80d5fb44270e93c951`. Cite the release tag or exact development commit actually used. Keep the notebook, inputs and code from the same version together.
+
+`release_status: development` describes the package, not whether your checkout has been committed or pushed. Check the latter in GitHub Desktop, or use `git status` and `git rev-parse HEAD`; compare the commit with the GitHub branch. Local edits are not uploaded automatically. The manifest excludes its own hash to avoid self-reference. Its hashes describe the distributed file bytes: notebook execution can rewrite execution metadata and HTML identifiers without changing the numerical results.
+
+For a future tagged release, set its version consistently in the notebook, `CITATION.cff`, README and manifest; set the release status and citation release date; verify the package hashes and tests; then tag that exact reviewed commit. Never move `v0.1.0` to a newer commit.
 
 Code and original tutorial material use the MIT license in `LICENSE`. Literature tables contain extracted factual values with attribution; source publications retain their respective rights. No source-PDF license is implied.
