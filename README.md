@@ -4,6 +4,14 @@ A reproducible Jupyter companion for a technical note in preparation by M. Kim. 
 
 **Start with [the executed notebook](SSM_FiCO2_PaCO2_tutorial.ipynb).** Its saved outputs include the worked examples, three figures, both conversion directions, literature agreement and supplementary sensitivity scenarios. Download [the HTML preview](SSM_FiCO2_PaCO2_tutorial.html) to read it without Jupyter.
 
+## Start here
+
+The current **0.1.1-dev** teaching revision opens with a short converter example in both directions, followed by one editable input cell. Enter your baseline, inspired percentage and achieved/target pressure; supply known optional parameters or leave them as `None` to keep the displayed model assumptions. The example is separate from the fixed literature reproduction below it.
+
+Section 5a follows [Jain et al. (2011)](https://doi.org/10.1038/jcbfm.2011.34) from its existing raw source record through both conversions. It separates prediction inputs from measured/reported comparators, explains signed errors, and shows why the reported and study-summary values coincide for this single cohort. The paper’s PETCO₂ means remain end-tidal proxies, not arterial measurements.
+
+This revision is an unreleased working copy. The published **v0.1.0** remains unchanged.
+
 ## Scope and results
 
 The operating slope is **1.7081818181818182 L min⁻¹ mmHg⁻¹**, calculated from the selected FiCO₂-in-medical-air evidence (Tallon 2020 and Peebles 2007; N = 33). The **2.4515884476534295** rebreathing slope is a labelled reference, never used for the validation residuals.
@@ -81,6 +89,6 @@ The separate dynamic-model research and tutorial are outside this repository. No
 
 ## Version and license
 
-Initial companion release: **v0.1.0**, 24 September 2026. Cite this version or its commit when reporting results. Use the same version of the notebook, inputs and code together.
+Current development version: **0.1.1-dev** (unreleased). Published baseline: **v0.1.0**, 24 September 2026. Cite the released version or exact commit actually used. Keep the notebook, inputs and code from the same version together.
 
 Code and original tutorial material use the MIT license in `LICENSE`. Literature tables contain extracted factual values with attribution; source publications retain their respective rights. No source-PDF license is implied.

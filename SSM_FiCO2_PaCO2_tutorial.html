@@ -7815,7 +7815,7 @@ a.anchor-link {
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="Setup">Setup<a class="anchor-link" href="#Setup">¶</a></h2><p>Download or clone the complete <a href="https://github.com/moonsukk/ssm-fico2-paco2">SSM companion repository</a>; the notebook needs its <code>code/</code> and <code>data/</code> folders. Use Python 3.12, install <code>requirements.txt</code> in a dedicated environment, then <strong>Restart Kernel and Run All</strong>. Alternatively, <code>python run_tutorial.py</code> executes a fresh kernel and saves the notebook and HTML preview. No input prompts, source-PDF downloads or credentials are needed at execution time.</p>
+<h2 id="Setup">Setup<a class="anchor-link" href="#Setup">¶</a></h2><p>Download or clone the complete <a href="https://github.com/moonsukk/ssm-fico2-paco2">SSM companion repository</a>; the notebook needs its <code>code/</code> and <code>data/</code> folders. Use Python 3.12, install <code>requirements.txt</code> in a dedicated environment, then <strong>Restart Kernel and Run All</strong>. Alternatively, <code>python run_tutorial.py</code> executes a fresh kernel and saves the notebook and HTML preview. No input prompts, source-PDF downloads or credentials are needed at execution time. Start with the quick conversion and editable inputs below; the detailed reproduction follows afterward.</p>
 <p>The package contains a frozen export of selected published aggregate observations and HCVR source values, with citations and extraction locations. It reconstructs study summaries, predictions and metrics from those inputs; <code>data/expected_results.json</code> is a regression reference, not the source of predictions. The author's editable workbook is not required. This export does not perform a new literature search or change eligibility decisions.</p>
 <p>Locally, the same notebook may sit beside a <code>companion/</code> folder. In the repository, <code>code/</code> and <code>data/</code> sit beside the notebook. PaCO₂, PETCO₂ and FiCO₂ keep a, ET and i inline; only the chemical 2 is subscripted.</p>
 </div>
@@ -7830,19 +7830,247 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">replace</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">math</span><span class="o">,</span><span class="w"> </span><span class="nn">hashlib</span><span class="o">,</span><span class="w"> </span><span class="nn">html</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
 
+<span class="c1"># Locate the converter in the public repository or the local companion folder.</span>
 <span class="n">cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
 <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span><span class="n">cwd</span><span class="p">,</span> <span class="n">cwd</span><span class="o">/</span><span class="s1">'companion'</span><span class="p">,</span> <span class="n">cwd</span><span class="o">/</span><span class="s1">'tutorial'</span><span class="o">/</span><span class="s1">'companion'</span><span class="p">,</span> <span class="n">cwd</span><span class="o">.</span><span class="n">parent</span><span class="o">/</span><span class="s1">'companion'</span><span class="p">]</span>
-<span class="n">DATA_ROOT</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="p">(</span><span class="n">q</span><span class="o">/</span><span class="s1">'data/validation_inputs.json'</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
-                  <span class="ow">and</span> <span class="p">(</span><span class="n">q</span><span class="o">/</span><span class="s1">'code/ssm.py'</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()),</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">DATA_ROOT</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">q</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="p">(</span><span class="n">q</span><span class="o">/</span><span class="s1">'code/ssm.py'</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()),</span> <span class="kc">None</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">DATA_ROOT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Open the notebook from the complete repository, including code/ and data/.'</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Open this notebook from the complete repository or its tutorial folder.'</span><span class="p">)</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">dont_write_bytecode</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">'MPLCONFIGDIR'</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">DATA_ROOT</span><span class="o">/</span><span class="s1">'.cache/matplotlib'</span><span class="p">))</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">DATA_ROOT</span><span class="o">/</span><span class="s1">'code'</span><span class="p">))</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">'MPLCONFIGDIR'</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">DATA_ROOT</span><span class="o">/</span><span class="s1">'.cache/matplotlib'</span><span class="p">))</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ssm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Params</span><span class="p">,</span> <span class="n">fico2_to_paco2</span><span class="p">,</span> <span class="n">paco2_to_fico2</span><span class="p">,</span> <span class="n">VERSION</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Converter ready:'</span><span class="p">,</span> <span class="n">VERSION</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Converter ready: ssm-2026-09-17-medical-air
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=quick-start-note">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Quick-start:-convert-in-either-direction">Quick start: convert in either direction<a class="anchor-link" href="#Quick-start:-convert-in-either-direction">¶</a></h2><p>Run the setup above, then this example. It uses the default FiCO₂-in-medical-air slope, <strong>assumes</strong> baseline PaCO₂ = 40 mmHg and standard pressure/metabolic conditions. Enter inspired CO₂ as a <strong>percentage</strong>: <code>5.0</code> means 5%, not a fraction of 0.05. Pressures are in mmHg.</p>
+<p>The first result estimates steady-state PaCO₂ for a supplied inspired percentage. The second estimates inspired percentage for a target/achieved pressure. Physiological steady state must already be established; these are model estimates, not measured individual responses. Rebreathing is reference-only later in the tutorial.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=quick-start-code">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">quick_params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span><span class="n">PaCO2_base</span><span class="o">=</span><span class="mf">40.0</span><span class="p">)</span>
+<span class="n">quick_pressure</span> <span class="o">=</span> <span class="n">fico2_to_paco2</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">quick_params</span><span class="p">)</span>
+<span class="n">quick_inspired</span> <span class="o">=</span> <span class="n">paco2_to_fico2</span><span class="p">(</span><span class="mf">50.0</span><span class="p">,</span> <span class="n">quick_params</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Forward: 5.00% inspired CO₂ → estimated PaCO₂ </span><span class="si">{</span><span class="n">quick_pressure</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> mmHg'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Reverse: 50.00 mmHg → estimated inspired CO₂ </span><span class="si">{</span><span class="n">quick_inspired</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Assumed baseline: </span><span class="si">{</span><span class="n">quick_params</span><span class="o">.</span><span class="n">PaCO2_base</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> mmHg; operating S: </span><span class="si">{</span><span class="n">quick_params</span><span class="o">.</span><span class="n">S</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1"> L/min/mmHg'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Forward: 5.00% inspired CO₂ → estimated PaCO₂ 46.66 mmHg
+Reverse: 50.00 mmHg → estimated inspired CO₂ 5.88%
+Assumed baseline: 40.0 mmHg; operating S: 1.7082 L/min/mmHg
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=known-inputs-note">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Try-your-known-inputs">Try your known inputs<a class="anchor-link" href="#Try-your-known-inputs">¶</a></h2><p>Edit the next cell and rerun it <strong>and its results cell</strong>. The prefilled 42 mmHg baseline, 5% mixture and 50 mmHg endpoint are illustrative inputs, not measurements from a participant. Replace them with appropriate known values. For optional parameters, <code>None</code> retains the model default; a number replaces that default. Supplied values are not automatically verified as measured values.</p>
+<p>Use the same measurement compartment for baseline and achieved pressure. <code>PaCO2</code> denotes arterial inputs; choose <code>PETCO2</code> only when deliberately using end-tidal measurements as arterial proxies. The result is still a model PaCO₂ estimate, not a direct PETCO₂ prediction or arterial measurement.</p>
+<p>The achieved pressure is a comparator for the forward estimate and an input for the reverse estimate. A target is not a measured validation endpoint. Baseline alveolar ventilation is derived from the chosen baseline and CO₂ production. These example parameters are separate from the fixed parameters used in the literature reproduction below.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=known-inputs-code">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># REQUIRED: replace these illustrative inputs with your known values.</span>
+<span class="n">baseline_mmhg</span> <span class="o">=</span> <span class="mf">42.0</span>
+<span class="n">inspired_co2_percent</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="n">achieved_or_target_mmhg</span> <span class="o">=</span> <span class="mf">50.0</span>
+<span class="n">pressure_endpoint</span> <span class="o">=</span> <span class="s2">"PaCO2"</span>             <span class="c1"># "PaCO2" or "PETCO2" for both pressure inputs</span>
+
+<span class="c1"># OPTIONAL: None = retain the model assumption; a number = supplied input.</span>
+<span class="n">known_atmospheric_pressure_mmhg</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">known_co2_production_ml_min_stpd</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">known_slope_l_min_mmhg</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">known_water_vapour_pressure_mmhg</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">optional_inputs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"Patm"</span><span class="p">:</span> <span class="n">known_atmospheric_pressure_mmhg</span><span class="p">,</span>
+    <span class="s2">"VCO2"</span><span class="p">:</span> <span class="n">known_co2_production_ml_min_stpd</span><span class="p">,</span>
+    <span class="s2">"S"</span><span class="p">:</span> <span class="n">known_slope_l_min_mmhg</span><span class="p">,</span>
+    <span class="s2">"PH2O"</span><span class="p">:</span> <span class="n">known_water_vapour_pressure_mmhg</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">supplied_inputs</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">optional_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
+<span class="n">example_params</span> <span class="o">=</span> <span class="n">replace</span><span class="p">(</span><span class="n">Params</span><span class="p">(),</span> <span class="n">PaCO2_base</span><span class="o">=</span><span class="n">baseline_mmhg</span><span class="p">,</span> <span class="o">**</span><span class="n">supplied_inputs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=known-inputs-results">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span>
+
+<span class="k">if</span> <span class="n">pressure_endpoint</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"PaCO2"</span><span class="p">,</span> <span class="s2">"PETCO2"</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Set pressure_endpoint to "PaCO2" or "PETCO2".'</span><span class="p">)</span>
+<span class="n">example_forward</span> <span class="o">=</span> <span class="n">fico2_to_paco2</span><span class="p">(</span><span class="n">inspired_co2_percent</span><span class="p">,</span> <span class="n">example_params</span><span class="p">)</span>
+<span class="n">example_reverse</span> <span class="o">=</span> <span class="n">paco2_to_fico2</span><span class="p">(</span><span class="n">achieved_or_target_mmhg</span><span class="p">,</span> <span class="n">example_params</span><span class="p">)</span>
+<span class="n">endpoint_label</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"PaCO2"</span><span class="p">:</span> <span class="s2">"PaCO₂"</span><span class="p">,</span> <span class="s2">"PETCO2"</span><span class="p">:</span> <span class="s2">"PETCO₂"</span><span class="p">}[</span><span class="n">pressure_endpoint</span><span class="p">]</span>
+<span class="n">parameter_rows</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">"Baseline "</span> <span class="o">+</span> <span class="n">endpoint_label</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">baseline_mmhg</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> mmHg"</span><span class="p">,</span> <span class="s2">"Entered"</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">units</span> <span class="ow">in</span> <span class="p">[</span>
+    <span class="p">(</span><span class="s2">"Patm"</span><span class="p">,</span> <span class="s2">"Atmospheric pressure"</span><span class="p">,</span> <span class="s2">"mmHg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"VCO2"</span><span class="p">,</span> <span class="s2">"CO₂ production"</span><span class="p">,</span> <span class="s2">"mL/min STPD"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"S"</span><span class="p">,</span> <span class="s2">"Ventilatory-response slope S"</span><span class="p">,</span> <span class="s2">"L/min/mmHg"</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">"PH2O"</span><span class="p">,</span> <span class="s2">"Water-vapour pressure"</span><span class="p">,</span> <span class="s2">"mmHg"</span><span class="p">),</span>
+<span class="p">]:</span>
+    <span class="n">parameter_rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">label</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="n">example_params</span><span class="p">,</span><span class="n">key</span><span class="p">)</span><span class="si">:</span><span class="s2">.4g</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                           <span class="s2">"Supplied"</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">supplied_inputs</span> <span class="k">else</span> <span class="s2">"Default assumption"</span><span class="p">))</span>
+<span class="n">parameter_rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">"Baseline alveolar ventilation"</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">example_params</span><span class="o">.</span><span class="n">VA_base</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> L/min BTPS"</span><span class="p">,</span> <span class="s2">"Derived"</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"| Parameter | Value used | Source |</span><span class="se">\n</span><span class="s2">|---|---|---|</span><span class="se">\n</span><span class="s2">"</span><span class="o">+</span>
+                 <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"| "</span><span class="o">+</span><span class="s2">" | "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">+</span><span class="s2">" |"</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">parameter_rows</span><span class="p">)))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="sa">f</span><span class="s2">"**Forward:** </span><span class="si">{</span><span class="n">inspired_co2_percent</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">% inspired CO₂ → estimated PaCO₂ **</span><span class="si">{</span><span class="n">example_forward</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> mmHg**.</span><span class="se">\n\n</span><span class="s2">"</span>
+                 <span class="sa">f</span><span class="s2">"**Reverse:** entered </span><span class="si">{</span><span class="n">endpoint_label</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">achieved_or_target_mmhg</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> mmHg → estimated inspired CO₂ **</span><span class="si">{</span><span class="n">example_reverse</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%**."</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">pressure_endpoint</span> <span class="o">==</span> <span class="s2">"PETCO2"</span><span class="p">:</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"**Proxy assumption:** both end-tidal inputs initialize/use the arterial model; no PaCO₂–PETCO₂ offset correction is applied."</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Value used</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline PaCO₂</td>
+<td>42 mmHg</td>
+<td>Entered</td>
+</tr>
+<tr>
+<td>Atmospheric pressure</td>
+<td>760 mmHg</td>
+<td>Default assumption</td>
+</tr>
+<tr>
+<td>CO₂ production</td>
+<td>200 mL/min STPD</td>
+<td>Default assumption</td>
+</tr>
+<tr>
+<td>Ventilatory-response slope S</td>
+<td>1.708 L/min/mmHg</td>
+<td>Default assumption</td>
+</tr>
+<tr>
+<td>Water-vapour pressure</td>
+<td>47 mmHg</td>
+<td>Default assumption</td>
+</tr>
+<tr>
+<td>Baseline alveolar ventilation</td>
+<td>4.110 L/min BTPS</td>
+<td>Derived</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
+<p><strong>Forward:</strong> 5.00% inspired CO₂ → estimated PaCO₂ <strong>47.87 mmHg</strong>.</p>
+<p><strong>Reverse:</strong> entered PaCO₂ 50.00 mmHg → estimated inspired CO₂ <strong>5.65%</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=analysis-setup-note">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="Understand-the-model-and-reproduce-the-paper">Understand the model and reproduce the paper<a class="anchor-link" href="#Understand-the-model-and-reproduce-the-paper">¶</a></h2><p>The quick start above uses the converter alone. Continue for the equations, source-based slopes, sensitivity and literature comparison. The next cell loads the <strong>fixed published inputs</strong>, recomputes the results and checks them against the saved expectations. It does not use or fit to your example parameters.</p>
+<p>Run all remaining cells in order for the complete reproduction. The parameter object <code>p</code> below belongs to that fixed analysis; <code>example_params</code> above belongs to your editable example. Changing either set of scientific inputs is not a new validation of the model.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=analysis-setup-code">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="o">,</span><span class="w"> </span><span class="nn">math</span><span class="o">,</span><span class="w"> </span><span class="nn">html</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -7924,7 +8152,7 @@ Python: 3.12.14 | NumPy: 2.5.3 | Matplotlib: 3.10.9
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [2]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">show_table</span><span class="p">([{</span><span class="s1">'parameter'</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span> <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">[</span>
@@ -7986,7 +8214,7 @@ S_j=\frac{\sum_g n_{jg}S_{jg}}{\sum_g n_{jg}}.$$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">slope_text</span><span class="p">[</span><span class="s1">'sources'</span><span class="p">]))</span>
@@ -8075,7 +8303,7 @@ S_j=\frac{\sum_g n_{jg}S_{jg}}{\sum_g n_{jg}}.$$</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="3.-Convert-in-both-directions">3. Convert in both directions<a class="anchor-link" href="#3.-Convert-in-both-directions">¶</a></h3><p>Use the <strong>FiCO₂-in-medical-air slope</strong> for the model. At sea-level conditions and baseline 40 mmHg, the example below converts a 5% inspired mixture to an equilibrium PaCO₂ estimate, then converts a target 50 mmHg back to an inspired percentage. All example numbers are calculated from the packaged settings.</p>
+<h3 id="3.-Equations-and-further-conversion-examples">3. Equations and further conversion examples<a class="anchor-link" href="#3.-Equations-and-further-conversion-examples">¶</a></h3><p>Use the <strong>FiCO₂-in-medical-air slope</strong> for the model. At sea-level conditions and baseline 40 mmHg, the example below converts a 5% inspired mixture to an equilibrium PaCO₂ estimate, then converts a target 50 mmHg back to an inspired percentage. All example numbers are calculated from the packaged settings.</p>
 <p>These are model-based equilibrium estimates; selecting a gas challenge for an individual requires more information than a population conversion.</p>
 <h3 id="The-equations-used-by-the-functions">The equations used by the functions<a class="anchor-link" href="#The-equations-used-by-the-functions">¶</a></h3><p>Write $G=K\dot V_{CO_2}$, $P_i=F(P_{atm}-P_{H_2O})$ and $D=G/P_{base}-SP_{base}$. Here $F$ is a fraction.</p>
 <p>For a supplied pressure:</p>
@@ -8092,7 +8320,7 @@ S_j=\frac{\sum_g n_{jg}S_{jg}}{\sum_g n_{jg}}.$$</p>
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">estimated_paco2</span> <span class="o">=</span> <span class="n">fico2_to_paco2</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
@@ -8135,53 +8363,6 @@ Round trip: 5.0000000000%
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=known-inputs-note">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h3 id="Supply-known-inputs">Supply known inputs<a class="anchor-link" href="#Supply-known-inputs">¶</a></h3><p>Edit this one cell to explore a different baseline or known parameters. Use measured values when available; unchanged defaults remain assumptions. Baseline alveolar ventilation is recalculated self-consistently. The achieved pressure is a comparator in the forward direction and an input in the reverse direction.</p>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=known-inputs-code">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">known_baseline_mmhg</span><span class="o">=</span><span class="mf">42.0</span>
-<span class="n">reported_fico2_pct</span><span class="o">=</span><span class="mf">5.0</span>
-<span class="n">achieved_or_target_mmhg</span><span class="o">=</span><span class="mf">50.0</span>
-<span class="n">individual_inputs</span><span class="o">=</span><span class="n">replace</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">PaCO2_base</span><span class="o">=</span><span class="n">known_baseline_mmhg</span><span class="p">)</span>
-<span class="c1"># Optional known inputs: replace(individual_inputs, Patm=..., VCO2=..., S=...)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Using baseline </span><span class="si">{</span><span class="n">known_baseline_mmhg</span><span class="si">:</span><span class="s1">g</span><span class="si">}</span><span class="s1"> mmHg and remaining default assumptions:'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Forward estimate: </span><span class="si">{</span><span class="n">fico2_to_paco2</span><span class="p">(</span><span class="n">reported_fico2_pct</span><span class="p">,</span><span class="n">individual_inputs</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> mmHg'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Reverse estimate: </span><span class="si">{</span><span class="n">paco2_to_fico2</span><span class="p">(</span><span class="n">achieved_or_target_mmhg</span><span class="p">,</span><span class="n">individual_inputs</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%'</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Using baseline 42 mmHg and remaining default assumptions:
-Forward estimate: 47.87 mmHg
-Reverse estimate: 5.65%
-</pre>
-</div>
-</div>
-</div>
-</div>
-</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=9911da94">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8200,7 +8381,7 @@ Reverse estimate: 5.65%
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">slope_text</span><span class="p">[</span><span class="s1">'sensitivity'</span><span class="p">]))</span>
@@ -8271,7 +8452,7 @@ Rebreathing : Range of eligible rebreathing study means; not individual extrema 
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [7]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">primary_reported</span> <span class="o">=</span> <span class="n">validation</span><span class="p">[</span><span class="s1">'primary_reported'</span><span class="p">]</span>
@@ -8347,6 +8528,188 @@ Primary operating slope: 1.7081818181818182 L/min/mmHg
 </div>
 </div>
 </div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=paper-walkthrough-note">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="5a.-Follow-one-paper-through-both-conversions">5a. Follow one paper through both conversions<a class="anchor-link" href="#5a.-Follow-one-paper-through-both-conversions">¶</a></h3><p><a href="https://doi.org/10.1038/jcbfm.2011.34">Jain et al. (2011)</a> studied ten healthy adult men during a reported 5% CO₂ mixture (20% O₂, balance N₂). We use the end-tidal group means in <strong>Table 1, printed p. 1507</strong>; the participant and gas-protocol details are on <strong>p. 1505</strong>. The paper calls this endpoint EtCO₂; we label it PETCO₂ consistently here.</p>
+<p>The next cell reads the paper's existing record from <code>data/validation_inputs.json</code>. It does not copy a saved model prediction. Baseline and achieved values are <strong>measured group means</strong>; FiCO₂ is the <strong>reported supplied mixture</strong>. Other model parameters retain the fixed analysis assumptions, including the FiCO₂-in-medical-air slope derived from separate HCVR papers.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=paper-inputs-code">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">source_records</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">((</span><span class="n">DATA_ROOT</span><span class="o">/</span><span class="s1">'data/validation_inputs.json'</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())[</span><span class="s1">'records'</span><span class="p">]</span>
+<span class="n">jain_matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">source_records</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">'record_id'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Jain2011_5pct'</span><span class="p">]</span>
+<span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">jain_matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+<span class="n">jain_source</span> <span class="o">=</span> <span class="n">jain_matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">jain_source</span><span class="p">[</span><span class="s1">'source_pressure_unit'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'mmHg'</span>
+<span class="k">assert</span> <span class="n">jain_source</span><span class="p">[</span><span class="s1">'endpoint'</span><span class="p">]</span> <span class="o">==</span> <span class="n">jain_source</span><span class="p">[</span><span class="s1">'baseline_endpoint'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'PETCO2'</span>
+<span class="k">assert</span> <span class="n">jain_source</span><span class="p">[</span><span class="s1">'context'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'pure_HC'</span> <span class="ow">and</span> <span class="n">jain_source</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'healthy_adults'</span>
+
+<span class="n">jain_baseline</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">jain_source</span><span class="p">[</span><span class="s1">'baseline_source_value'</span><span class="p">])</span>
+<span class="n">jain_achieved</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">jain_source</span><span class="p">[</span><span class="s1">'endpoint_source_value'</span><span class="p">])</span>
+<span class="n">jain_dose</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">jain_source</span><span class="p">[</span><span class="s1">'fico2_pct'</span><span class="p">])</span>
+<span class="n">show_table</span><span class="p">([</span>
+    <span class="p">{</span><span class="s1">'quantity'</span><span class="p">:</span> <span class="s1">'Baseline PETCO₂'</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">:</span> <span class="n">jain_baseline</span><span class="p">,</span> <span class="s1">'unit'</span><span class="p">:</span> <span class="s1">'mmHg'</span><span class="p">,</span>
+     <span class="s1">'forward'</span><span class="p">:</span> <span class="s1">'Input'</span><span class="p">,</span> <span class="s1">'reverse'</span><span class="p">:</span> <span class="s1">'Input'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">'quantity'</span><span class="p">:</span> <span class="s1">'Achieved PETCO₂'</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">:</span> <span class="n">jain_achieved</span><span class="p">,</span> <span class="s1">'unit'</span><span class="p">:</span> <span class="s1">'mmHg'</span><span class="p">,</span>
+     <span class="s1">'forward'</span><span class="p">:</span> <span class="s1">'Measured comparator'</span><span class="p">,</span> <span class="s1">'reverse'</span><span class="p">:</span> <span class="s1">'Input'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">'quantity'</span><span class="p">:</span> <span class="s1">'Reported FiCO₂'</span><span class="p">,</span> <span class="s1">'value'</span><span class="p">:</span> <span class="n">jain_dose</span><span class="p">,</span> <span class="s1">'unit'</span><span class="p">:</span> <span class="s1">'%'</span><span class="p">,</span>
+     <span class="s1">'forward'</span><span class="p">:</span> <span class="s1">'Input'</span><span class="p">,</span> <span class="s1">'reverse'</span><span class="p">:</span> <span class="s1">'Reported comparator'</span><span class="p">},</span>
+<span class="p">],</span> <span class="p">[(</span><span class="s1">'quantity'</span><span class="p">,</span> <span class="s1">'Paper value'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'value'</span><span class="p">,</span> <span class="s1">'Mean / dose'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'unit'</span><span class="p">,</span> <span class="s1">'Unit'</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'forward'</span><span class="p">,</span> <span class="s1">'Forward use'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'reverse'</span><span class="p">,</span> <span class="s1">'Reverse use'</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Source record: </span><span class="si">{</span><span class="n">jain_source</span><span class="p">[</span><span class="s1">'record_id'</span><span class="p">]</span><span class="si">}</span><span class="s2"> | N = </span><span class="si">{</span><span class="n">jain_source</span><span class="p">[</span><span class="s1">'subjects_n'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Reported SDs: baseline </span><span class="si">{</span><span class="n">jain_source</span><span class="p">[</span><span class="s1">'baseline_uncertainty_value'</span><span class="p">]</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> mmHg; "</span>
+      <span class="sa">f</span><span class="s2">"achieved </span><span class="si">{</span><span class="n">jain_source</span><span class="p">[</span><span class="s1">'endpoint_uncertainty_value'</span><span class="p">]</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2"> mmHg."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow-x:auto"><table style="font-size:0.93em"><thead><tr><th>Paper value</th><th>Mean / dose</th><th>Unit</th><th>Forward use</th><th>Reverse use</th></tr></thead><tbody><tr><td>Baseline PETCO₂</td><td>39</td><td>mmHg</td><td>Input</td><td>Input</td></tr><tr><td>Achieved PETCO₂</td><td>47</td><td>mmHg</td><td>Measured comparator</td><td>Input</td></tr><tr><td>Reported FiCO₂</td><td>5</td><td>%</td><td>Input</td><td>Reported comparator</td></tr></tbody></table></div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Source record: Jain2011_5pct | N = 10
+Reported SDs: baseline 1 mmHg; achieved 2 mmHg.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=paper-calculation-note">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p><strong>Calculate, then compare.</strong> Forward conversion uses baseline and FiCO₂, leaving the achieved measurement out of the prediction. Reverse conversion uses baseline and achieved pressure, leaving the reported FiCO₂ out of the estimate. Both directions use the same fixed model and the same paper.</p>
+<p>Define the pressure error as <strong>model PaCO₂ − measured PETCO₂</strong>, in mmHg, and the inspired-concentration error as <strong>estimated FiCO₂ − reported FiCO₂</strong>, in percentage points. This comparison assumes PETCO₂ can initialize and be compared with the arterial model by proxy; it does not turn the end-tidal readings into arterial measurements.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=paper-conversions-code">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">jain_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">jain_baseline</span><span class="p">)</span>
+<span class="n">jain_pressure_estimate</span> <span class="o">=</span> <span class="n">fico2_to_paco2</span><span class="p">(</span><span class="n">jain_dose</span><span class="p">,</span> <span class="n">jain_params</span><span class="p">)</span>
+<span class="n">jain_dose_estimate</span> <span class="o">=</span> <span class="n">paco2_to_fico2</span><span class="p">(</span><span class="n">jain_achieved</span><span class="p">,</span> <span class="n">jain_params</span><span class="p">)</span>
+<span class="n">jain_pressure_error</span> <span class="o">=</span> <span class="n">jain_pressure_estimate</span> <span class="o">-</span> <span class="n">jain_achieved</span>
+<span class="n">jain_dose_error</span> <span class="o">=</span> <span class="n">jain_dose_estimate</span> <span class="o">-</span> <span class="n">jain_dose</span>
+
+<span class="n">show_table</span><span class="p">([</span>
+    <span class="p">{</span><span class="s1">'direction'</span><span class="p">:</span> <span class="s1">'Forward: PaCO₂ model vs measured PETCO₂'</span><span class="p">,</span>
+     <span class="s1">'estimate'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">jain_pressure_estimate</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'reported'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">jain_achieved</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+     <span class="s1">'error'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">jain_pressure_error</span><span class="si">:</span><span class="s1">+.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'unit'</span><span class="p">:</span> <span class="s1">'mmHg'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">'direction'</span><span class="p">:</span> <span class="s1">'Reverse: inspired CO₂'</span><span class="p">,</span>
+     <span class="s1">'estimate'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">jain_dose_estimate</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%'</span><span class="p">,</span> <span class="s1">'reported'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">jain_dose</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">%'</span><span class="p">,</span>
+     <span class="s1">'error'</span><span class="p">:</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">jain_dose_error</span><span class="si">:</span><span class="s1">+.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'unit'</span><span class="p">:</span> <span class="s1">'percentage points'</span><span class="p">},</span>
+<span class="p">],</span> <span class="p">[(</span><span class="s1">'direction'</span><span class="p">,</span> <span class="s1">'Comparison'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'estimate'</span><span class="p">,</span> <span class="s1">'Model estimate'</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'reported'</span><span class="p">,</span> <span class="s1">'Paper comparator'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'error'</span><span class="p">,</span> <span class="s1">'Estimate − comparator'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'unit'</span><span class="p">,</span> <span class="s1">'Error unit'</span><span class="p">)])</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Fixed S = </span><span class="si">{</span><span class="n">jain_params</span><span class="o">.</span><span class="n">S</span><span class="si">:</span><span class="s1">.8f</span><span class="si">}</span><span class="s1"> L/min/mmHg; baseline = </span><span class="si">{</span><span class="n">jain_params</span><span class="o">.</span><span class="n">PaCO2_base</span><span class="si">:</span><span class="s1">g</span><span class="si">}</span><span class="s1"> mmHg'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Pressure error: </span><span class="si">{</span><span class="n">jain_pressure_estimate</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> − </span><span class="si">{</span><span class="n">jain_achieved</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> = </span><span class="si">{</span><span class="n">jain_pressure_error</span><span class="si">:</span><span class="s1">+.2f</span><span class="si">}</span><span class="s1"> mmHg'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'FiCO₂ error: </span><span class="si">{</span><span class="n">jain_dose_estimate</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">% − </span><span class="si">{</span><span class="n">jain_dose</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">% = </span><span class="si">{</span><span class="n">jain_dose_error</span><span class="si">:</span><span class="s1">+.2f</span><span class="si">}</span><span class="s1"> percentage points'</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
+<div style="overflow-x:auto"><table style="font-size:0.93em"><thead><tr><th>Comparison</th><th>Model estimate</th><th>Paper comparator</th><th>Estimate − comparator</th><th>Error unit</th></tr></thead><tbody><tr><td>Forward: PaCO₂ model vs measured PETCO₂</td><td>46.09</td><td>47.00</td><td>-0.91</td><td>mmHg</td></tr><tr><td>Reverse: inspired CO₂</td><td>5.25%</td><td>5.00%</td><td>+0.25</td><td>percentage points</td></tr></tbody></table></div>
+</div>
+</div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Fixed S = 1.70818182 L/min/mmHg; baseline = 39 mmHg
+Pressure error: 46.09 − 47.00 = -0.91 mmHg
+FiCO₂ error: 5.25% − 5.00% = +0.25 percentage points
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=paper-interpretation-code">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="cm-editor cm-s-jupyter">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">jain_reported</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">primary_reported</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">'record_id'</span><span class="p">]</span> <span class="o">==</span> <span class="n">jain_source</span><span class="p">[</span><span class="s1">'record_id'</span><span class="p">])</span>
+<span class="n">jain_summary</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">primary_weighted</span> <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">'study_id'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Jain2011'</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="p">(</span><span class="n">jain_reported</span><span class="p">,</span> <span class="n">jain_summary</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">jain_baseline</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s1">'baseline_mmhg'</span><span class="p">],</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">jain_achieved</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s1">'measured_mmhg'</span><span class="p">],</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">jain_pressure_estimate</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s1">'estimated_paco2_mmhg'</span><span class="p">],</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">math</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">jain_dose_estimate</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="s1">'estimated_fico2_pct'</span><span class="p">],</span> <span class="n">abs_tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">jain_summary</span><span class="p">[</span><span class="s1">'subjects_n'</span><span class="p">]</span> <span class="o">==</span> <span class="n">jain_source</span><span class="p">[</span><span class="s1">'subjects_n'</span><span class="p">]</span>
+<span class="k">assert</span> <span class="n">jain_params</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">p</span><span class="o">.</span><span class="n">S</span> <span class="o">==</span> <span class="n">settings</span><span class="p">[</span><span class="s1">'S'</span><span class="p">]</span>
+<span class="n">pressure_relation</span> <span class="o">=</span> <span class="s1">'below'</span> <span class="k">if</span> <span class="n">jain_pressure_error</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">'above'</span> <span class="k">if</span> <span class="n">jain_pressure_error</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">'equal to'</span>
+<span class="n">dose_relation</span> <span class="o">=</span> <span class="s1">'below'</span> <span class="k">if</span> <span class="n">jain_dose_error</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">'above'</span> <span class="k">if</span> <span class="n">jain_dose_error</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">'equal to'</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"**Read the signs:** the forward estimate is </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">jain_pressure_error</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> mmHg </span><span class="si">{</span><span class="n">pressure_relation</span><span class="si">}</span><span class="s2"> "</span>
+    <span class="sa">f</span><span class="s2">"the reported end-tidal mean. The reverse estimate is </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">jain_dose_error</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> percentage points "</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">dose_relation</span><span class="si">}</span><span class="s2"> the reported inspired concentration. These are two residuals from one aggregate "</span>
+    <span class="s2">"comparison, not independent validation datasets, individual prediction errors or the full-analysis RMSE/bias.</span><span class="se">\n\n</span><span class="s2">"</span>
+    <span class="s2">"**Reported versus study summary:** this paper supplies one cohort mean pair. Both representations "</span>
+    <span class="s2">"therefore use the same baseline and achieved means and give the same estimates; multiplying both "</span>
+    <span class="s2">"means by the same N does not create a different subject-weighted mean. Do not count the cohort twice.</span><span class="se">\n\n</span><span class="s2">"</span>
+    <span class="s2">"**Source limits:** the reported 3-minute exposure is not proof of arterial steady state. Table 1 does "</span>
+    <span class="s2">"not specify the exact PETCO₂ averaging window. Its ±1 and ±2 mmHg values are between-subject SDs, "</span>
+    <span class="s2">"not confidence intervals, model-error SDs or a validated tolerance. "</span>
+    <span class="s2">"The calculation reproduces the existing literature comparison; no source value or model parameter is fitted."</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
+<p><strong>Read the signs:</strong> the forward estimate is 0.91 mmHg below the reported end-tidal mean. The reverse estimate is 0.25 percentage points above the reported inspired concentration. These are two residuals from one aggregate comparison, not independent validation datasets, individual prediction errors or the full-analysis RMSE/bias.</p>
+<p><strong>Reported versus study summary:</strong> this paper supplies one cohort mean pair. Both representations therefore use the same baseline and achieved means and give the same estimates; multiplying both means by the same N does not create a different subject-weighted mean. Do not count the cohort twice.</p>
+<p><strong>Source limits:</strong> the reported 3-minute exposure is not proof of arterial steady state. Table 1 does not specify the exact PETCO₂ averaging window. Its ±1 and ±2 mmHg values are between-subject SDs, not confidence intervals, model-error SDs or a validated tolerance. The calculation reproduces the existing literature comparison; no source value or model parameter is fitted.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=556706b1">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8367,7 +8730,7 @@ Primary operating slope: 1.7081818181818182 L/min/mmHg
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [8]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">show_table</span><span class="p">(</span><span class="n">primary_weighted</span><span class="p">,</span> <span class="p">[(</span><span class="s1">'study_id'</span><span class="p">,</span><span class="s1">'Paper'</span><span class="p">),(</span><span class="s1">'endpoint'</span><span class="p">,</span><span class="s1">'Endpoint'</span><span class="p">),(</span><span class="s1">'subjects_n'</span><span class="p">,</span><span class="s1">'N'</span><span class="p">),</span>
@@ -8427,7 +8790,7 @@ Convert the mean baseline: 48.356246 mmHg; average acquisition predictions: 48.3
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">show_table</span><span class="p">(</span><span class="n">primary_weighted</span><span class="p">,[(</span><span class="s1">'study_id'</span><span class="p">,</span><span class="s1">'Paper'</span><span class="p">),(</span><span class="s1">'endpoint'</span><span class="p">,</span><span class="s1">'Measured endpoint'</span><span class="p">),</span>
@@ -8470,7 +8833,7 @@ Convert the mean baseline: 48.356246 mmHg; average acquisition predictions: 48.3
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [10]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">show_table</span><span class="p">(</span><span class="n">primary_weighted</span><span class="p">,[(</span><span class="s1">'study_id'</span><span class="p">,</span><span class="s1">'Paper'</span><span class="p">),(</span><span class="s1">'endpoint'</span><span class="p">,</span><span class="s1">'Input endpoint'</span><span class="p">),</span>
@@ -8514,7 +8877,7 @@ Convert the mean baseline: 48.356246 mmHg; average acquisition predictions: 48.3
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [11]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s1">'**Global panel agreement (both directions)**'</span><span class="p">))</span>
@@ -8596,7 +8959,7 @@ Convert the mean baseline: 48.356246 mmHg; average acquisition predictions: 48.3
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [12]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [18]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">show_table</span><span class="p">([</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">validation</span><span class="p">[</span><span class="s1">'combined_mixed_metrics'</span><span class="p">]</span> <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="s1">'direction'</span><span class="p">]</span><span class="o">==</span><span class="s1">'FiCO2_to_pressure'</span><span class="p">],</span>
@@ -8637,7 +9000,7 @@ Convert the mean baseline: 48.356246 mmHg; average acquisition predictions: 48.3
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [13]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [19]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">figure</span> <span class="o">=</span> <span class="n">combined</span><span class="p">(</span><span class="n">validation</span><span class="p">,</span><span class="n">print_size</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">payload</span><span class="o">=</span><span class="n">plot_payload</span><span class="p">)</span>
@@ -8678,7 +9041,7 @@ Convert the mean baseline: 48.356246 mmHg; average acquisition predictions: 48.3
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [14]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [20]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">duration</span> <span class="o">=</span> <span class="n">validation</span><span class="p">[</span><span class="s1">'duration_summary'</span><span class="p">]</span>
@@ -8738,7 +9101,7 @@ Papers without a complete comparable duration: Xu2011, Chawla2015, Ashkanian2008
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [15]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [21]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="n">scenario_input</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">((</span><span class="n">DATA_ROOT</span><span class="o">/</span><span class="s1">'data/supplement_sensitivity_inputs.json'</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
@@ -8799,7 +9162,7 @@ Papers without a complete comparable duration: Xu2011, Chawla2015, Ashkanian2008
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [16]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [22]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">independent_forward</span><span class="p">(</span><span class="n">dose_pct</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
