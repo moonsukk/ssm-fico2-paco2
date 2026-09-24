@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "Please cite the version or commit used. This software accompanies a technical note in preparation."
+type: software
+title: "Steady-state FiCO2–PaCO2 conversion: reproducible Jupyter companion"
+authors:
+  - family-names: Kim
+    given-names: Moonsuk
+version: 0.1.0
+date-released: 2026-09-24
+repository-code: "https://github.com/moonsukk/ssm-fico2-paco2"
+url: "https://github.com/moonsukk/ssm-fico2-paco2"
+license: MIT
+abstract: "Approximate bidirectional conversion conditional on physiological steady state, with source-defined literature comparisons and parameter sensitivity."

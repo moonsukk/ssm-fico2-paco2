@@ -1,0 +1,22 @@
+{
+  "production_scenarios_ml_min_stpd": [
+    160.0,
+    250.0
+  ],
+  "production_basis": "Illustrative model scenarios around the 200 mL/min operating assumption; not a literature interval, confidence interval, measured validation input or fitted parameter.",
+  "alternative_slope": {
+    "study_id": "Peebles2007",
+    "value": 1.7,
+    "sd": 0.9,
+    "unit": "L min^-1 mmHg^-1",
+    "endpoint": "PaCO2",
+    "ventilation": "minute ventilation",
+    "n": 12,
+    "replacement_for_record_id": "HCVR_JQXJ9H92_PET_001",
+    "replacement_source_slope": 1.6,
+    "scope": "Hypercapnic slope from the same cohort as the selected PETCO2 slope; replace that contribution only, do not add participants.",
+    "citation": "Peebles et al. (2007)",
+    "source_url": "https://doi.org/10.1113/jphysiol.2007.137075",
+    "source_locator": "PDF p6 / printed p352, ventilatory response paragraph continued at top right; Figure 4 on printed p354."
+  }
+}

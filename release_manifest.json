@@ -1,0 +1,32 @@
+{
+  "version": "v0.1.0",
+  "release_date": "2026-09-24",
+  "model_version": "ssm-2026-09-17-medical-air",
+  "source_analysis_sha256": "326d438f8539d0057f6a35e4853b2725ba1ce33c3350f94e9d053e883164bd17",
+  "files": {
+    ".github/workflows/test.yml": "c64e446379ac1b5dcb3823e917cf8695938a9a5ebd4d3fd7d419d1afa970b6b4",
+    ".gitignore": "1b11a0cfc97fd1c93502ca9a546165c64629db9bc0f9207aa4cb370047ce6e33",
+    "CITATION.cff": "7446124ab7e25b00a93212ece76e124939696258316e2b04db4c2de65c0be736",
+    "LICENSE": "562d4134eb4f0d2d1778289e6a212bf57d83e59b25ef912ea13c6dc1b8fbd36a",
+    "README.md": "9bd05f7f617f60ced0430f602526a7a7d0a1c916edbeb9f54b64b5897b229c0f",
+    "SSM_FiCO2_PaCO2_tutorial.html": "6aa5f71820f3d44f29a95689cbfba2c41748b498ab4a4b534182fc90ccefaeb6",
+    "SSM_FiCO2_PaCO2_tutorial.ipynb": "73eb0b60095493a68bae15a864ae731baead0ed1030ee17968268ada1f11564e",
+    "code/model_figures.py": "6f2d0ea477ebaba48a9d04d9416a51dbb25dec03d0b218f705f4e9e48b81f894",
+    "code/plot_style.py": "06e1bf49c276cabae444331b78f04c1cb5fbc76045be47a36fa4751233d8d7db",
+    "code/plot_validation.py": "b96b83c417da2f9ea4624071dca2ffa22490d643413b74c25a6088ecbfe9a39d",
+    "code/slope_narrative.py": "fbbd577e9fba584a04ba215a55aa358f24bc6b044770c481f88c6bfd81f2ae5a",
+    "code/ssm.py": "8384367e50e3090c445aa07fbadf606bd6943ad5bed089031f76fd3fb56ca1ee",
+    "code/tutorial_analysis.py": "614a5791fa863de96efbb08464e74c2d3df4df81b73145c4cc04af1296432d88",
+    "data/analysis_policy.json": "2a2dee3a41ee5bd5aa35c2374412c7ad214dc01db3f20b9663aa71a4c7849248",
+    "data/expected_results.json": "277a484d3a9e79552a0a5c1e4ed5fab6224b82a0bccfb66ace3674d16710a2b0",
+    "data/hcvr_inputs.json": "306b3d84e8dbcf9d101ea35db9fd67eb17a871d8d3cceb5981d2ce20edb087e7",
+    "data/parameter_evidence.json": "8e97ef5acc9293ac02ceb5964d7fe76646cff51c99a28daeb4be8e3aa4b27d5d",
+    "data/provenance.json": "1f119771f048f8f3c59682cc109de40cabea83dafeb414e15e9433effb7907b2",
+    "data/settings.json": "ec9103bb2aa89ea7932eda8a9ce57bc8735c82568fe1a73cb3ba358fb2cc1f4e",
+    "data/supplement_sensitivity_inputs.json": "287e95c66b056d70339e8184b4ac8891fa1f397e8d40803f5bad40c556526991",
+    "data/validation_inputs.json": "22a0389c93876f697384d15483ff2e2168d318995b725e451cb561efcdffd3e3",
+    "requirements.txt": "26a92a5202f88d6d5017e455bce17c871bb94d4025cab8fcfb4fd8008a0fe4c2",
+    "run_tutorial.py": "84950a786451d228b7a705904246b7e1d783468c9baa80b28ba9999cf94a8978",
+    "tests/test_companion.py": "e214c5ccbae7439737a596b258c263fd0185798e56bcd718c308890e2373df0b"
+  }
+}

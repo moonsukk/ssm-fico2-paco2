@@ -1,0 +1,27 @@
+{
+  "values": {
+    "S": 1.7081818181818182,
+    "VCO2": 200.0,
+    "Patm": 760.0,
+    "PH2O": 47.0,
+    "K": 0.863,
+    "max_paco2": 80.0,
+    "reference_baseline_mmhg": 40.0,
+    "kpa_per_mmhg": 0.1333224,
+    "slope_low": 0.5466541211770972,
+    "slope_high": 2.869709515186539
+  },
+  "source_record_ids": {
+    "S": "PARAM_FICO2_MEDICAL_AIR_MEAN",
+    "slope_low": "PARAM_FICO2_MEDICAL_AIR_SD_LOW",
+    "slope_high": "PARAM_FICO2_MEDICAL_AIR_SD_HIGH",
+    "VCO2": "PARAM_VCO2_DEFAULT",
+    "K": "PARAM_K_DEFAULT",
+    "Patm": "PARAM_PATM_DEFAULT",
+    "PH2O": "PARAM_PH2O_DEFAULT",
+    "max_paco2": "PARAM_PACO2_GUARD",
+    "reference_baseline_mmhg": "PARAM_BASELINE_DEFAULT",
+    "kpa_per_mmhg": "PARAM_KPA_PER_MMHG"
+  },
+  "note": "S and sensitivity bounds are independently recalculated from hcvr_inputs.json and checked against these frozen settings. Validation uses each source baseline; reference_baseline_mmhg is for model illustration only."
+}

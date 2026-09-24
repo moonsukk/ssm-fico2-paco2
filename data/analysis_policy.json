@@ -1,0 +1,18 @@
+{
+  "id": "equal_paper_global_and_stratified_v2",
+  "primary_representation": "Study summary",
+  "sensitivity_representation": "Reported observations",
+  "unit": "paper × dose × endpoint × gas context",
+  "weighting": "Within each dose/context metric, each paper contributes 1/J; its retained comparisons share that weight equally. Endpoint-specific metrics further stratify by endpoint.",
+  "bias": "sum_p(mean_i(error_pi)) / J",
+  "rmse": "sqrt(sum_p(mean_i(error_pi^2)) / J)",
+  "summary": "Use a reported cohort mean when single; combine independent compatible subgroups by N; average repeated acquisitions with cohort N counted once. No pooling across doses, endpoints or gas contexts.",
+  "figure_selection": "A–C: healthy adults, source-supported or explicitly assumed, exact pure HC. D: those pure-HC records plus every eligible exact mixed-HC record in healthy adults.",
+  "adult_rule": "Source-supported: minimum age ≥18 or explicit adult designation. Analytically assumed adult cohorts are separately labelled healthy_adults_assumed; the assumption does not establish published age evidence.",
+  "assumed_adult_studies": [
+    "Kety1948",
+    "Xu2011"
+  ],
+  "headline": "Global panel C (pure HC) and D (pure plus mixed HC) metrics score each representation and direction separately. Each paper has equal total influence across all its retained panel comparisons; doses, endpoints and contexts divide that paper weight. Dose/context metrics remain available.",
+  "legacy_keys": "subject_weighted / within_paper_weighted / *_weighted remain stable machine identifiers for Study summary; they do not specify across-paper weighting."
+}
