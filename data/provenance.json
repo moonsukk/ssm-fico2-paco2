@@ -1,8 +1,8 @@
 {
   "source": "Frozen selected literature-input export",
   "selection": "40 retained exact reported comparisons and their 27 regenerated within-paper summaries; no workbook, database, source PDF or private filesystem is needed to run this package.",
-  "source_workbook_sha256": "6899c34f91cbaf84d830f545bc0607749cc99d41f050b67512787362a71cff70",
-  "source_analysis_sha256": "326d438f8539d0057f6a35e4853b2725ba1ce33c3350f94e9d053e883164bd17",
+  "source_workbook_sha256": "40d6bfc8634245c738c693051b70be8277c688f410c0e63b10cab04f19855a5d",
+  "source_analysis_sha256": "14162180cf22b8c4fcce632c3c28d58e71f1042ca8cf816787754de98b352a84",
   "source_model_sha256": "8384367e50e3090c445aa07fbadf606bd6943ad5bed089031f76fd3fb56ca1ee",
   "source_engine_sha256": "521e7308e3411740bb94b819b017537bde44589f8a2e639626101fbf0cb66d45",
   "model_version": "ssm-2026-09-17-medical-air",

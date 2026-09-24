@@ -35,7 +35,18 @@ class ReleaseMetadataTests(unittest.TestCase):
     def test_model_and_analysis_identity_match_provenance(self):
         provenance=json.loads((ROOT/'data/provenance.json').read_text())
         self.assertEqual(self.manifest['source_analysis_sha256'],provenance['source_analysis_sha256'])
-        self.assertEqual(self.manifest['model_version'],self.notebook['cells'][2]['outputs'][0]['text'][0].strip().split(': ',1)[1])
+        # Resolve the converter setup by identity, not its position in the lesson.
+        matches=[c for c in self.notebook['cells'] if c.get('id')=='9e223e73']
+        self.assertEqual(len(matches),1,'Expected one converter setup cell: 9e223e73')
+        self.assertEqual(matches[0]['cell_type'],'code')
+        model_lines=[]
+        for output in matches[0].get('outputs',[]):
+            if output.get('output_type')=='stream' and output.get('name')=='stdout':
+                text=output.get('text','')
+                if isinstance(text,list):text=''.join(text)
+                model_lines.extend(line.strip() for line in text.splitlines()
+                                   if line.strip().startswith('Converter ready: '))
+        self.assertEqual(model_lines,[f"Converter ready: {self.manifest['model_version']}"])
         self.assertNotIn('release_manifest.json',self.manifest['files'])
 
 if __name__=='__main__':unittest.main()

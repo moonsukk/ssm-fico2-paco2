@@ -1,7 +1,7 @@
 {
   "version": "0.1.1-dev",
   "model_version": "ssm-2026-09-17-medical-air",
-  "source_analysis_sha256": "326d438f8539d0057f6a35e4853b2725ba1ce33c3350f94e9d053e883164bd17",
+  "source_analysis_sha256": "14162180cf22b8c4fcce632c3c28d58e71f1042ca8cf816787754de98b352a84",
   "files": {
     ".github/workflows/test.yml": "c64e446379ac1b5dcb3823e917cf8695938a9a5ebd4d3fd7d419d1afa970b6b4",
     ".gitignore": "1b11a0cfc97fd1c93502ca9a546165c64629db9bc0f9207aa4cb370047ce6e33",
@@ -20,7 +20,7 @@
     "data/expected_results.json": "277a484d3a9e79552a0a5c1e4ed5fab6224b82a0bccfb66ace3674d16710a2b0",
     "data/hcvr_inputs.json": "306b3d84e8dbcf9d101ea35db9fd67eb17a871d8d3cceb5981d2ce20edb087e7",
     "data/parameter_evidence.json": "8e97ef5acc9293ac02ceb5964d7fe76646cff51c99a28daeb4be8e3aa4b27d5d",
-    "data/provenance.json": "1f119771f048f8f3c59682cc109de40cabea83dafeb414e15e9433effb7907b2",
+    "data/provenance.json": "e2713edae62384162aaefd1d85c71dd003b3aa6ec0fdeae64fd81835b22020ad",
     "data/settings.json": "ec9103bb2aa89ea7932eda8a9ce57bc8735c82568fe1a73cb3ba358fb2cc1f4e",
     "data/supplement_sensitivity_inputs.json": "287e95c66b056d70339e8184b4ac8891fa1f397e8d40803f5bad40c556526991",
     "data/validation_inputs.json": "22a0389c93876f697384d15483ff2e2168d318995b725e451cb561efcdffd3e3",
@@ -29,7 +29,7 @@
     "tests/test_companion.py": "e214c5ccbae7439737a596b258c263fd0185798e56bcd718c308890e2373df0b",
     "tests/test_notebook_inputs.py": "92cd91d2a9cf956495fac2e72764dfc40463f1580fc5881df10ddeb23d6c13d1",
     "tests/test_notebook_setup.py": "66316fa561c1263e1c951cb8ab871d6852dad0d4256422cb7c352d096a81a7c3",
-    "tests/test_release_metadata.py": "3752811228b36b032a2b8cf91a77872f56076fdeecf3c013d96db5bdc0d0b86f"
+    "tests/test_release_metadata.py": "0d689644c80626ad36fd5d0231d100ef586bf1f2901e8d6ab696f0507ebf4894"
   },
   "based_on": "v0.1.0",
   "release_status": "development",
