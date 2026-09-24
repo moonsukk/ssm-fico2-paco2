@@ -10,6 +10,8 @@ The current **0.1.1-dev** teaching revision opens with a short converter example
 
 Section 5a follows [Jain et al. (2011)](https://doi.org/10.1038/jcbfm.2011.34) from its existing raw source record through both conversions. It separates prediction inputs from measured/reported comparators, explains signed errors, and shows why the reported and study-summary values coincide for this single cohort. The paper’s PETCO₂ means remain end-tidal proxies, not arterial measurements.
 
+The linked **Reading guide** provides a shorter route through inputs, equations, the paper example, sensitivity and results. Run all cells in order before following that route. Expand the optional evidence tables for every source contribution, comparison and dose-specific metric; no rows are dropped and closed tables do not skip calculations. The three original plots and concise interpretations remain visible.
+
 The `main` branch carries the **0.1.1-dev development version**. It is separate from the fixed [v0.1.0 release](https://github.com/moonsukk/ssm-fico2-paco2/tree/v0.1.0); a commit or push to `main` does not create a new tagged release.
 
 ## Scope and results
